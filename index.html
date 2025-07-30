@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador 2025 Interactivo</title>
+    <style>
+        /* --- FUENTES Y ESTILOS GENERALES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --color-primario: #00bcd4;
+            --color-secundario: #03a9f4;
+            --color-fondo: #0f172a;
+            --color-texto-principal: #e2e8f0;
+            --color-texto-secundario: #94a3b8;
+            --color-tarjeta: #1e293b;
+            --color-borde: #334155;
+            --color-resaltado: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto-principal);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--color-primario);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* --- SISTEMA DE PESTAÑAS --- */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: var(--color-tarjeta);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            padding: 10px;
+        }
+
+        .tab-link {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            background: none;
+            color: var(--color-texto-secundario);
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .tab-link:hover {
+            background-color: var(--color-borde);
+            color: var(--color-texto-principal);
+        }
+
+        .tab-link.active {
+            background-color: var(--color-primario);
+            color: var(--color-fondo);
+            font-weight: 700;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- SECCIÓN PORTADA E INICIO --- */
+        .cover-section {
+            background: linear-gradient(135deg, #0f172a, #3b82f6);
+            border-radius: 8px;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .cover-section h1 {
+            font-size: 4rem;
+            color: #fff;
+            font-weight: 700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+        .cover-section p {
+            font-size: 1.5rem;
+            color: var(--color-texto-secundario);
+        }
+
+        /* --- CALENDARIO ANUAL --- */
+        .calendar-anual-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .month-table {
+            background-color: var(--color-tarjeta);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--color-borde);
+        }
+        .month-table h3 {
+            text-align: center;
+            color: var(--color-secundario);
+        }
+        .month-table table {
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+        }
+        .month-table th {
+            padding-bottom: 10px;
+            color: var(--color-texto-secundario);
+            font-size: 0.9em;
+        }
+        .month-table td {
+            padding: 4px;
+            font-size: 0.9em;
+        }
+
+        /* --- PLANTILLAS MENSUALES --- */
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--color-tarjeta);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-borde);
+        }
+
+        /* Campos Editables */
+        .editable {
+            background-color: var(--color-fondo);
+            border: 1px solid var(--color-borde);
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 40px;
+            cursor: text;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            margin-bottom: 10px;
+        }
+        .editable:focus {
+            outline: none;
+            border-color: var(--color-primario);
+            box-shadow: 0 0 0 3px rgba(3, 169, 244, 0.3);
+        }
+
+        /* --- HABIT TRACKER --- */
+        .habit-tracker .habit-row {
+            margin-bottom: 1rem;
+        }
+        .habit-tracker .habit-title {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .habit-days {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .day-circle {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 1px solid var(--color-borde);
+            background-color: var(--color-fondo);
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--color-texto-secundario);
+        }
+        .day-circle.completed {
+            background-color: var(--color-primario);
+            border-color: var(--color-primario);
+        }
+
+        /* --- PLANIFICADOR SEMANAL --- */
+        .week-planner {
+            border-left: 3px solid var(--color-secundario);
+            padding-left: 1.5rem;
+            margin-top: 2rem;
+        }
+        .week-planner h3 {
+            color: var(--color-secundario);
+        }
+        .daily-tasks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .day-column h4 {
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--color-borde);
+            margin-bottom: 1rem;
+        }
+        .task-item {
+            background-color: var(--color-fondo);
+            border-left: 2px solid var(--color-borde);
+            padding: 8px 12px;
+            min-height: 38px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            cursor: text;
+        }
+
+        /* Botón de borrado */
+        .clear-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        .clear-btn:hover {
+            background-color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- NAVEGACIÓN DE PESTAÑAS -->
+        <nav class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'inicio')">Inicio</button>
+            <button class="tab-link" onclick="openTab(event, 'enero')">Enero</button>
+            <button class="tab-link" onclick="openTab(event, 'febrero')">Febrero</button>
+            <button class="tab-link" onclick="openTab(event, 'marzo')">Marzo</button>
+            <button class="tab-link" onclick="openTab(event, 'abril')">Abril</button>
+            <button class="tab-link" onclick="openTab(event, 'mayo')">Mayo</button>
+            <button class="tab-link" onclick="openTab(event, 'junio')">Junio</button>
+            <button class="tab-link" onclick="openTab(event, 'julio')">Julio</button>
+            <button class="tab-link" onclick="openTab(event, 'agosto')">Agosto</button>
+            <button class="tab-link" onclick="openTab(event, 'septiembre')">Septiembre</button>
+            <button class="tab-link" onclick="openTab(event, 'octubre')">Octubre</button>
+            <button class="tab-link" onclick="openTab(event, 'noviembre')">Noviembre</button>
+            <button class="tab-link" onclick="openTab(event, 'diciembre')">Diciembre</button>
+        </nav>
+
+        <!-- CONTENIDO DE LA PESTAÑA INICIO -->
+        <div id="inicio" class="tab-content active">
+            <div class="cover-section">
+                <h1>PLAN & SUCCEED</h1>
+                <p>TAME TO ACT</p>
+            </div>
+            
+            <h2>Calendario 2025</h2>
+            <div class="calendar-anual-grid">
+                <!-- Enero-Marzo -->
+                <div class="month-table">
+                    <h3>Enero</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td></td><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+                        <tr><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+                        <tr><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td></tr>
+                        <tr><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td></tr>
+                        <tr><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Febrero</h3>
+                    <table>
+                         <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                         <tr><td></td><td></td><td></td><td></td><td></td><td>1</td><td>2</td></tr>
+                         <tr><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
+                         <tr><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td></tr>
+                         <tr><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td></tr>
+                         <tr><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Marzo</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td><td>1</td><td>2</td></tr>
+                        <tr><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
+                        <tr><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td></tr>
+                        <tr><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td></tr>
+                        <tr><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td></tr>
+                        <tr><td>31</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <!-- Abril-Junio -->
+                 <div class="month-table">
+                    <h3>Abril</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+                        <tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td></tr>
+                        <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td></tr>
+                        <tr><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
+                        <tr><td>28</td><td>29</td><td>30</td><td></td><td></td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Mayo</h3>
+                    <table>
+                         <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                         <tr><td></td><td></td><td></td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+                         <tr><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td></tr>
+                         <tr><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td></tr>
+                         <tr><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td></tr>
+                         <tr><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td><td></td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Junio</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td></tr>
+                        <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+                        <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
+                        <tr><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td></tr>
+                        <tr><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td></tr>
+                        <tr><td>30</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <!-- Julio-Septiembre -->
+                <div class="month-table">
+                    <h3>Julio</h3>
+                    <table>
+                       <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                       <tr><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+                       <tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td></tr>
+                       <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td></tr>
+                       <tr><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
+                       <tr><td>28</td><td>29</td><td>30</td><td>31</td><td></td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Agosto</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td></td><td></td><td></td><td></td><td>1</td><td>2</td><td>3</td></tr>
+                        <tr><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+                        <tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
+                        <tr><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td></tr>
+                        <tr><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Septiembre</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                        <tr><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td></tr>
+                        <tr><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td></tr>
+                        <tr><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td></tr>
+                        <tr><td>29</td><td>30</td><td></td><td></td><td></td><td></td><td></td></tr>
+                    </table>
+                </div>
+                 <!-- Octubre-Diciembre -->
+                <div class="month-table">
+                    <h3>Octubre</h3>
+                    <table>
+                       <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                       <tr><td></td><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+                       <tr><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+                       <tr><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td></tr>
+                       <tr><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td></tr>
+                       <tr><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Noviembre</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td><td>1</td><td>2</td></tr>
+                        <tr><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
+                        <tr><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td></tr>
+                        <tr><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td></tr>
+                        <tr><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td></tr>
+                    </table>
+                </div>
+                <div class="month-table">
+                    <h3>Diciembre</h3>
+                    <table>
+                        <tr><th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th></tr>
+                        <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                        <tr><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td></tr>
+                        <tr><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td></tr>
+                        <tr><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td></tr>
+                        <tr><td>29</td><td>30</td><td>31</td><td></td><td></td><td></td><td></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLANTILLAS DE CONTENIDO MENSUAL (GENERADAS CON JS) -->
+        <div id="enero" class="tab-content"></div>
+        <div id="febrero" class="tab-content"></div>
+        <div id="marzo" class="tab-content"></div>
+        <div id="abril" class="tab-content"></div>
+        <div id="mayo" class="tab-content"></div>
+        <div id="junio" class="tab-content"></div>
+        <div id="julio" class="tab-content"></div>
+        <div id="agosto" class="tab-content"></div>
+        <div id="septiembre" class="tab-content"></div>
+        <div id="octubre" class="tab-content"></div>
+        <div id="noviembre" class="tab-content"></div>
+        <div id="diciembre" class="tab-content"></div>
+    </div>
+
+    <script>
+        // --- LÓGICA DE NAVEGACIÓN POR PESTAÑAS ---
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // --- LÓGICA DEL HABIT TRACKER Y CAMPOS EDITABLES ---
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Generar contenido para cada mes
+            const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+            months.forEach((month, index) => {
+                const monthNameCaps = month.charAt(0).toUpperCase() + month.slice(1);
+                const monthContainer = document.getElementById(month);
+
+                // Crear la estructura HTML para el mes
+                let content = `
+                    <div class="section-grid">
+                        <div class="card">
+                            <h2>Metas de ${monthNameCaps}</h2>
+                            ${Array(6).fill(`<div class="editable" contenteditable="true" id="${month}-meta-${months.indexOf(month)}"></div>`).join('')}
+                        </div>
+
+                        <div class="card habit-tracker">
+                            <h2>Habit Tracker - ${monthNameCaps}</h2>
+                            ${Array(7).fill(0).map((_, i) => `
+                                <div class="habit-row">
+                                    <div class="habit-title editable" contenteditable="true" id="${month}-habit-title-${i}">HÁBITO:</div>
+                                    <div class="habit-days">
+                                        ${Array(daysInMonth[index]).fill(0).map((_, d) => `<div class="day-circle" data-day="${d + 1}" data-habit-id="${month}-habit-${i}-${d+1}">${d + 1}</div>`).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Añadir 4 planificadores semanales
+                for(let week = 1; week <= 4; week++) {
+                    content += `
+                    <div class="card week-planner">
+                        <h3>Semana ${week}</h3>
+                        <div class="daily-tasks">
+                           ${['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].map(day => `
+                           <div class="day-column">
+                               <h4>${day}</h4>
+                               ${Array(7).fill(0).map((_, taskIndex) => `
+                               <div class="task-item" contenteditable="true" id="${month}-week${week}-${day.toLowerCase()}-task${taskIndex}"></div>
+                               `).join('')}
+                           </div>
+                           `).join('')}
+                        </div>
+                        <button class="clear-btn" data-week-id="${month}-week${week}">Borrar Semana</button>
+                    </div>`;
+                }
+
+                monthContainer.innerHTML = content;
+            });
+            
+            // --- PERSISTENCIA DE DATOS CON LOCALSTORAGE ---
+            function saveData(id, content) {
+                localStorage.setItem(id, content);
+            }
+
+            function loadData() {
+                const editables = document.querySelectorAll('[contenteditable="true"]');
+                editables.forEach(el => {
+                    const savedContent = localStorage.getItem(el.id);
+                    if (savedContent) {
+                        el.innerHTML = savedContent;
+                    }
+                });
+                
+                const circles = document.querySelectorAll('.day-circle');
+                circles.forEach(circle => {
+                    const isCompleted = localStorage.getItem(circle.dataset.habitId);
+                    if (isCompleted === 'true') {
+                        circle.classList.add('completed');
+                    }
+                });
+            }
+
+            // Event listener para guardar datos al escribir
+            document.body.addEventListener('input', (e) => {
+                if (e.target.hasAttribute('contenteditable')) {
+                    saveData(e.target.id, e.target.innerHTML);
+                }
+            });
+            
+            // Event listener para el Habit Tracker
+            document.body.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target.classList.contains('day-circle')) {
+                    target.classList.toggle('completed');
+                    saveData(target.dataset.habitId, target.classList.contains('completed'));
+                }
+                
+                // Event listener para el botón de borrar
+                if(target.classList.contains('clear-btn')) {
+                    const weekId = target.dataset.weekId;
+                    const tasksToClear = document.querySelectorAll(`[id^="${weekId}"]`);
+                    tasksToClear.forEach(task => {
+                        if(task.hasAttribute('contenteditable')) {
+                            task.innerHTML = '';
+                            localStorage.removeItem(task.id);
+                        }
+                    });
+                }
+            });
+
+            // Cargar datos al iniciar
+            loadData();
+        });
+
+    </script>
+</body>
+</html>
